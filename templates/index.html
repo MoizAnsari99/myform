@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Commute Survey</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <form action='/result' id="commuteSurvey" method="POST">
+    {% csrf_token %}
+
+    <!-- Step 1: Distance Covered -->
+    <div class="step active" id="step1">
+      <h2>Step 1: Distance Covered</h2>
+      <label for="distance">How many kilometers do you travel daily to reach the office?</label>
+      <input type="number" id="distance" name="distance" required>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2: Weekly Commute Modes -->
+    <div class="step" id="step2">
+      <h2>Step 2: Weekly Commute Modes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Company Bus</th>
+            <th>Own Bike</th>
+            <th>Own Car</th>
+            <th>Auto/Taxi</th>
+            <th>Walk</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for day in days_of_week %}
+          <tr>
+            <td>{{ day }}</td>
+            <td><input type="checkbox" name="{{ day|lower }}[]" value="Company Bus"></td>
+            <td><input type="checkbox" name="{{ day|lower }}[]" value="Own Bike"></td>
+            <td><input type="checkbox" name="{{ day|lower }}[]" value="Own Car"></td>
+            <td><input type="checkbox" name="{{ day|lower }}[]" value="Auto/Taxi"></td>
+            <td><input type="checkbox" name="{{ day|lower }}[]" value="Walk"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        
+      </table>
+      
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="button" onclick="generateVehicleDetails()">Next</button>
+    </div>
+
+    <!-- Step 3: Vehicle Details -->
+    <div class="step" id="step3">
+      <h2>Step 3: Vehicle Details</h2>
+      <div id="vehicleDetails"></div>
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+
+  <script>
+    // Function to move to the next step
+    function nextStep() {
+      const currentStep = document.querySelector('.step.active');
+      const nextStep = currentStep.nextElementSibling;
+
+      if (nextStep && nextStep.classList.contains('step')) {
+        currentStep.classList.remove('active');
+        nextStep.classList.add('active');
+      }
+
+      // Update Progress Bar
+      const steps = document.querySelectorAll('.step');
+      const progress = (Array.from(steps).indexOf(nextStep) + 1) / steps.length * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+
+    // Function to move to the previous step
+    function prevStep() {
+      const currentStep = document.querySelector('.step.active');
+      const prevStep = currentStep.previousElementSibling;
+
+      if (prevStep && prevStep.classList.contains('step')) {
+        currentStep.classList.remove('active');
+        prevStep.classList.add('active');
+      }
+
+      // Update Progress Bar
+      const steps = document.querySelectorAll('.step');
+      const progress = (Array.from(steps).indexOf(prevStep) + 1) / steps.length * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+
+    // Function to generate vehicle details dynamically
+    function generateVehicleDetails() {
+  const vehicleDetailsDiv = document.getElementById('vehicleDetails');
+  vehicleDetailsDiv.innerHTML = ''; // Clear previous content
+
+  const modes = document.querySelectorAll('input[type="checkbox"]:checked');
+  const selectedModes = Array.from(modes).map(mode => mode.value);
+  
+  let requiresDetails = false;
+
+  if (selectedModes.length === 0) {
+    alert('Please select at least one commute mode to proceed.');
+    return;
+  }
+
+  // If only "Walk" is selected, no further details are required
+  if (selectedModes.includes('Walk') && selectedModes.length === 1) {
+    nextStep();
+    return;
+  }
+
+  if (selectedModes.includes('Own Bike')) {
+    vehicleDetailsDiv.innerHTML += `
+      <div class="vehicle-details">
+        <h3>Bike Details</h3>
+        <label for="bikeFuel">Fuel Type:</label>
+        <select id="bikeFuel" name="bikeFuel" required>
+          <option value="petrol">Petrol</option>
+        </select>
+        <label for="bikeCC">Bike CC:</label>
+        <input type="number" id="bikeCC" name="bikeCC" placeholder="e.g., 150" required>
+      </div>`;
+    requiresDetails = true;
+  }
+
+  if (selectedModes.includes('Own Car')) {
+    vehicleDetailsDiv.innerHTML += `
+      <div class="vehicle-details">
+        <h3>Car Details</h3>
+        <label for="carFuel">Fuel Type:</label>
+        <select id="carFuel" name="carFuel" required>
+          <option value="petrol">Petrol</option>
+          <option value="diesel">Diesel</option>
+          <option value="cng">CNG</option>
+          <option value="electric">Electric</option>
+        </select>
+      </div>`;
+    requiresDetails = true;
+  }
+
+  if (selectedModes.includes('Company Bus')) {
+    vehicleDetailsDiv.innerHTML += `
+      <div class="vehicle-details">
+        <h3>Bus Details</h3>
+        <label for="busType">Bus Type:</label>
+        <select id="busType" name="busType" required>
+          <option value="ldv">Light-Duty Vehicle (LDV)</option>
+          <option value="mdv">Medium-Duty Vehicle (MDV)</option>
+          <option value="hdv">Heavy-Duty Vehicle (HDV)</option>
+        </select>
+      </div>`;
+    requiresDetails = true;
+  }
+
+  if (selectedModes.includes('Auto/Taxi')) {
+    vehicleDetailsDiv.innerHTML += `
+      <div class="vehicle-details">
+        <h3>Auto/Taxi Details</h3>
+        <label for="autoTaxiType">Select Type:</label>
+        <select id="autoTaxiType" name="autoTaxiType" required>
+          <option value="auto">Three-Wheeler Auto</option>
+          <option value="taxi">Four-Wheeler Taxi</option>
+        </select>
+      </div>`;
+    requiresDetails = true;
+  }
+
+  nextStep();
+}
+  </script>
+
+</body>
+</html>

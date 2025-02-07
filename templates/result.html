@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Emission Report</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #6dd4c3;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      background: #feffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+    }
+
+    .highlighted {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(90deg, #00bfae, #52f312);
+      padding: 15px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #3498db;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 1.2em;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Carbon Emission Report</h1>
+
+    <!-- Total Weekly Emission -->
+    <h2>Total Annual GHG Emission</h2>
+    <p class="highlighted">{{ total_weekly_emission }} kg CO₂</p>
+
+    <!-- Daily Emissions Bar Chart -->
+    <h2>Daily GHG Emissions</h2>
+    <div class="chart-container">
+      <canvas id="emissionChart"></canvas>
+    </div>
+
+    <!-- Back to Survey Button -->
+    <a href="/" class="btn">🔄 Take Another Survey</a>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById("emissionChart").getContext("2d");
+
+        var data = {
+            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            datasets: [{
+                label: "Daily Emission (kg CO₂)",
+                data: [
+                    {% if daily_emissions.monday is not None %}{{ daily_emissions.monday }}{% else %}0{% endif %},
+                    {% if daily_emissions.tuesday is not None %}{{ daily_emissions.tuesday }}{% else %}0{% endif %},
+                    {% if daily_emissions.wednesday is not None %}{{ daily_emissions.wednesday }}{% else %}0{% endif %},
+                    {% if daily_emissions.thursday is not None %}{{ daily_emissions.thursday }}{% else %}0{% endif %},
+                    {% if daily_emissions.friday is not None %}{{ daily_emissions.friday }}{% else %}0{% endif %},
+                    {% if daily_emissions.saturday is not None %}{{ daily_emissions.saturday }}{% else %}0{% endif %},
+                    {% if daily_emissions.sunday is not None %}{{ daily_emissions.sunday }}{% else %}0{% endif %}
+                ],
+                backgroundColor: ["#3498db", "#2ecc71", "#f1c40f", "#e74c3c", "#9b59b6", "#e67e22", "#34495e"],
+                borderColor: "#2c3e50",
+                borderWidth: 1.5,
+                borderRadius: 10,
+                hoverBackgroundColor: "#2c3e50"
+            }]
+        };
+
+        var config = {
+            type: "bar",
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.raw + " kg CO₂";
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: "#2c3e50",
+                            font: { weight: "bold" }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(200, 200, 200, 0.3)" },
+                        ticks: {
+                            color: "#2c3e50",
+                            font: { weight: "bold" }
+                        }
+                    }
+                }
+            }
+        };
+
+        new Chart(ctx, config);
+    });
+  </script>
+</body>
+</html>

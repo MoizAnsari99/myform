@@ -1,0 +1,103 @@
+/* Progress Bar Styling */
+.progress-bar {
+  width: 100%;
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.progress {
+  height: 10px;
+  width: 0;
+  background-color: #00bfae; /* Green color */
+  border-radius: 5px;
+}
+
+.background {
+  background: url('/static/images/forest.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Form and Steps Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #eaf7f6; /* Light background */
+}
+
+form {
+  width: 80%;
+  margin: 20px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #333;
+}
+
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: center;
+}
+
+table th {
+  background-color: #00bfae; /* Green header */
+  color: white;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+/* Add padding to make the table less compact */
+table td {
+  padding: 12px 20px;
+}
+
+/* Button Styling */
+button {
+  background-color: #00bfae; /* Green */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #007d69; /* Darker green on hover */
+}
+
+.icon {
+  width: 30px; 
+  height: 30px; 
+  margin-right: 10px;
+  border-radius: 50%; /* Optional: Rounded icon */
+  background-color: #e8f5e9; /* Optional: Light green background */
+  padding: 5px;
+}

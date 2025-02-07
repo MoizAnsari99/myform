@@ -1,0 +1,15 @@
+<h2>Daily GHG Emissions (kg CO₂)</h2>
+<table border="1">
+  <tr>
+    <th>Day</th>
+    <th>GHG Emission (kg CO₂)</th>
+  </tr>
+  {% for day, emission in daily_emissions.items %}
+  <tr>
+    <td>{{ day|capfirst }}</td>
+    <td>{{ emission }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Total Weekly GHG Emission: {{ total_weekly_emission }} kg CO₂</h3>
