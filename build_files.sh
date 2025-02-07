@@ -1,15 +1,8 @@
-echo "BUILD START"
+#!/bin/bash
 
-# create a virtual environment named 'venv' if it doesn't already exist
-python3.9 -m venv venv
+# Install dependencies using Python's module call
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 
-# activate the virtual environment
-source venv/bin/activate
-
-# install all deps in the venv
-pip install -r requirements.txt
-
-# collect static files using the Python interpreter from venv
-python manage.py collectstatic --noinput
-
-echo "BUILD END"
+# Collect static files for Django
+python3 manage.py collectstatic --noinput
